@@ -7,6 +7,15 @@ def get_settings():
         log("Could not find settings.cfg.")
         create_settings()
         return ""
+    with open(path, "r") as file:
+        settings = ""
+        for line in file:
+            line = line.strip().replace(" ","")
+            if line == "" or line[0] == "#":
+                continue
+            settings = line.split(":")
+            return settings
+        return ""
 
 
 def create_settings():
