@@ -6,7 +6,7 @@ def get_settings():
     if not os.path.exists(path):
         log("Could not find settings.cfg.")
         create_settings()
-        return ""
+        return []
     with open(path, "r") as file:
         settings = ""
         for line in file:
@@ -14,8 +14,13 @@ def get_settings():
             if line == "" or line[0] == "#":
                 continue
             settings = line.split(":")
+            try:
+                settings = [int(s) if s.isdigit() else s for s in settings]
+            except ValueError:
+                log("Error Parsing Settings: Non-integer found.")
+                return []
             return settings
-        return ""
+        return []
 
 
 def create_settings():

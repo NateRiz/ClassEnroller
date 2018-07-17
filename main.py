@@ -3,8 +3,14 @@ from enroll import Enroll
 
 def main():
     settings = get_settings()
-    if settings != "":
-        enroller = Enroll(settings[0], settings[1])
+    if settings:
+        if len(settings) == 2:
+            enroller = Enroll(settings[0], settings[1])
+        elif len(settings) ==3:
+            enroller = Enroll(settings[0], settings[1], settings[2])
+        else:
+            print("Unsupported aamount of arguments")
+            return
         enroller.main_loop()
     else:
         print("Error parsing Settings.cfg")
