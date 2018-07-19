@@ -1,13 +1,15 @@
 from file_manager import get_settings
 from enroll import Enroll
-
+from notify import Notify
+import I
 def main():
     settings = get_settings()
     if settings:
-        if len(settings) == 2:
-            enroller = Enroll(settings[0], settings[1])
-        elif len(settings) ==3:
-            enroller = Enroll(settings[0], settings[1], settings[2])
+        notify = Notify(settings["to"],settings["username"], settings["password"], settings["phone"]
+        if len(settings["course"]) == 2:
+            enroller = Enroll(notify, settings["course"][0], settings["course"][1])
+        elif len(settingsi["course"]) ==3:
+            enroller = Enroll(notify, settings["course"][0], settings["course"][1], settings["course"][2])
         else:
             print("Unsupported aamount of arguments")
             return
@@ -15,5 +17,7 @@ def main():
     else:
         print("Error parsing Settings.cfg")
 
+
 if __name__ == "__main__":
     main()
+    I.close_driver()
