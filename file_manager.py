@@ -35,7 +35,7 @@ def get_settings():
 
 def create_settings():
     with open("settings.cfg","w") as settings:
-        template = """#[Class Enroller]\n#Template:$DEPT:$COURSE_NO[:$SECTION]\n#Example: CSE:231\n#Example: CSE:231:4\n#Optional Notifications - GMAIL SUPPORT ONLY:\nTo_Email:email_to_notify@mail.com\nFrom_Email_Username:email_sender@gmail.com\nFrom_Email_Password:password\nPhone:2223334444"""
+        template = """#[Class Enroller]\n#Template:$TERM:$DEPT:$COURSE_NO[:$SECTION]\n#Example: Fall 2018:CSE:231\n#Example: Fall 2018:CSE:231:4\n#Optional Notifications - GMAIL SUPPORT ONLY:\nTo_Email:email_to_notify@mail.com\nFrom_Email_Username:email_sender@gmail.com\nFrom_Email_Password:password\nPhone:2223334444"""
         settings.write(template)
         log("Created settings.cfg file.")
 

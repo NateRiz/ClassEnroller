@@ -20,15 +20,21 @@ class I:
         I._driver.get(url)
 
     @staticmethod
-    def search_for_course(subject, course_number = "*"):
+    def search_for_course(term, subject, course_number = "*"):
         Course.subject = subject
         Course.course_number = course_number
+        try:
+            WebDriverWait(I._driver, 30).until(EC.presence_of_elment_located((By.ID,"MainContent_ddlTerm")))
+            select = Select(I._driver.find_element_by_id("MainContent_ddlTerm"))
+            select.select_by_value(term)
+        except Except as e:
+            log("search_for_course Dropdown Select Term error with passed in term: {}, subject: {}, course_number: {} --- Error: {}".format(term, subhect, course_number, e))
         try:
             WebDriverWait(I._driver, 30).until(EC.presence_of_element_located((By.ID,"MainContent_ddlSubject")))
             select = Select(I._driver.find_element_by_id("MainContent_ddlSubject"))
             select.select_by_value(subject.upper())
         except Exception as e:
-            log("search_for_course Dropdown Select error with passed in subject: {}, course_number: {} --- Error: {}".format(subject,course_number, e))
+            log("search_for_course Dropdown Select error with passed in term: {}, subject: {}, course_number: {} --- Error: {}".format(term, subject,course_number, e))
             return
         try:
             field = I._driver.find_element_by_id("MainContent_txtCourseNumber")
