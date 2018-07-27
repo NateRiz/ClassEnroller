@@ -5,7 +5,7 @@ import I
 def main():
     settings = get_settings()
     if settings:
-        notify = Notify(settings["to"],settings["username"], settings["password"], settings["phone"]
+        notify = Notify(settings["to"],settings["username"], settings["password"], settings["phone"])
         if len(settings["course"]) == 3:
             enroller = Enroll(notify, settings["course"][0], settings["course"][1], settings["course"][2])
         elif len(settingsi["course"]) == 4:
@@ -20,4 +20,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    I.close_driver()
+    I.I.close_driver()

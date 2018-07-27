@@ -24,11 +24,11 @@ class I:
         Course.subject = subject
         Course.course_number = course_number
         try:
-            WebDriverWait(I._driver, 30).until(EC.presence_of_elment_located((By.ID,"MainContent_ddlTerm")))
+            WebDriverWait(I._driver, 30).until(EC.presence_of_element_located((By.ID,"MainContent_ddlTerm")))
             select = Select(I._driver.find_element_by_id("MainContent_ddlTerm"))
-            select.select_by_value(term)
-        except Except as e:
-            log("search_for_course Dropdown Select Term error with passed in term: {}, subject: {}, course_number: {} --- Error: {}".format(term, subhect, course_number, e))
+            select.select_by_visible_text(term)
+        except Exception as e:
+            log("search_for_course Dropdown Select Term error with passed in term: {}, subject: {}, course_number: {} --- Error: {}".format(term, subject, course_number, e))
         try:
             WebDriverWait(I._driver, 30).until(EC.presence_of_element_located((By.ID,"MainContent_ddlSubject")))
             select = Select(I._driver.find_element_by_id("MainContent_ddlSubject"))
@@ -54,20 +54,21 @@ class I:
     @staticmethod
     def check_for_space_in_sections(section):
         courses = I._get_course_data(section)
+        I.available_sections = ""
         for c in courses:
             if section == None or c.section == section:
                 if c.enrolled < c.limit:
-                    available_sections+="{} {}:{} Opening: {}/{} Enrolled\n".format(Course.subject, Course.course_number, c.section, c.enrolled, c.limit)
-                    log("SUCCESS: Found room in section {}.".format(section))
+                    I.available_sections+="{} {} (Section: {}) Opening: {}/{} Enrolled\n".format(Course.subject, Course.course_number, c.section, c.enrolled, c.limit)
+                    log("SUCCESS: Found room in section {}.".format(c.section))
                 else:
-                    log("FAIL: Could not find room in section {}.".format(section))
+                    log("FAIL: Could not find room in section {}.".format(c.section))
 
     @staticmethod
     def _get_sections(section):
         try:
             WebDriverWait(I._driver, 30).until(EC.presence_of_element_located((By.XPATH,'.//td[@class="section-number"]/*[1]')))
             sections = I._driver.find_elements_by_xpath('.//td[@class="section-number"]/*[1]')
-            return [int(s.text) for s in sections]
+            return [str(s.text) for s in sections]
         except Exception as e:
             log("verify_section_exists error with passed in section: {} --- Error: {}".format(section, e))
             return list()

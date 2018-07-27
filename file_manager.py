@@ -10,25 +10,21 @@ def get_settings():
     with open(path, "r") as file:
         settings = {"to":"", "username":"", "password":"", "phone":""}
         for line in file:
-            line = line.strip().replace(" ","")
-            if line == "" or line[0] == "#" or line.split(":")<=1:
+            line = line.strip()
+            if line == "" or line[0] == "#" or len(line.split(":"))<=1:
                 continue
             line = line.split(":")
             if line[0] == "To_Email":
                 settings["to"] = line[1]
             elif line[0] == "From_Email_Password":
-                settings["password" = line[1]
+                settings["password"] = line[1]
             elif line[0] == "From_Email_Username":
                 settings["username"] = line[1]
             elif line[0] == "Phone":
                 settings["phone"] = line[1]
             else:
-                settings["course"] = line.split(":")
-            try:
-                settings = [int(s) if s.isdigit() else s for s in settings]
-            except ValueError:
-                log("Error Parsing Settings: Non-integer found.")
-                return {}
+                settings["course"] = line
+                settings["course"] = [int(s) if s.isdigit() else s for s in settings["course"]]
         return settings
     return {}
 
