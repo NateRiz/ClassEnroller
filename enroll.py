@@ -23,11 +23,13 @@ class Enroll:
                 self.notify.send_email(I.available_sections)
                 self.notify.send_text(I.available_sections)
                 self.try_delay(Enroll.success_delay)
+                I.available_sections = ""
             self.try_delay(Enroll.failure_delay)
 
     def try_delay(self, delay):
         current_time = datetime.now()
         delta_time = (current_time.timestamp() - self.last_run_time.timestamp()) * 1000
-        time_to_delay = delay - delta_time
+        time_to_delay = (delay - delta_time)//1000
         if time_to_delay > 0:
+            print("Delaying Script for {} seconds".format(time_to_delay))
             sleep(time_to_delay)

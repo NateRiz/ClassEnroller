@@ -54,7 +54,6 @@ class I:
     @staticmethod
     def check_for_space_in_sections(section):
         courses = I._get_course_data(section)
-        I.available_sections = ""
         for c in courses:
             if section == None or c.section == section:
                 if c.enrolled < c.limit:
@@ -70,7 +69,7 @@ class I:
             sections = I._driver.find_elements_by_xpath('.//td[@class="section-number"]/*[1]')
             return [str(s.text) for s in sections]
         except Exception as e:
-            log("verify_section_exists error with passed in section: {} --- Error: {}".format(section, e))
+            log("get_sections error with passed in section: {} --- Error: {}".format(section, e))
             return list()
 
     @staticmethod
