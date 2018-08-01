@@ -12,7 +12,8 @@ class I:
     _options.add_argument("--headless")
     _options.add_argument("--disable-gpu")
     _driver = webdriver.Chrome(chrome_options = _options)
-
+    
+    found_planner_link = None
     available_sections = ""
 
     @staticmethod
@@ -57,8 +58,14 @@ class I:
         for c in courses:
             if section == None or c.section == section:
                 if c.enrolled < c.limit:
-                    I.available_sections+="{} {} (Section: {}) Opening: {}/{} Enrolled\n".format(Course.subject, Course.course_number, c.section, c.enrolled, c.limit)
+                    I.found_planner_link = c.link
                     log("SUCCESS: Found room in section {}.".format(c.section))
+                    message_limit = 1400
+                    if I.available_sections <= message_limit:
+                        I.available_sections+="{} {} (Section: {}) Opening: {}/{} Enrolled\n".format(Course.subject, Course.course_number, c.section, c.enrolled, c.limit)
+                    else:
+                        I.available_sections+="And more...\n"
+                        return
                 else:
                     log("FAIL: Could not find room in section {}.".format(c.section))
 
@@ -93,19 +100,55 @@ class I:
             return []
 
     @staticmethod
+    def _get_planner_links():
+        try:
+            WebDriverWait(I._driver, 30).until(EC.presence_of_element_located((By.XPATH,'.//a[contains(@title, "CLICK HERE to add")]')))
+            links = I._driver.find_elements_by_xpath('.//a[contains(@title, "CLICK HERE to add")]')
+            return links 
+        except Exception as e:
+            log("get_planner_link error --- Error: {}".format(e))
+            return []
+
+    @staticmethod
     def _get_course_data(section):
         sections = I._get_sections(section)
         enrolled = I._get_enrolled()
         limits = I._get_limits()
-        if not(len(sections) == len(enrolled) == len(limits)):
-            log("get_section_data data has uneven lengths. sections: {}, enrolled: {}, limits: {}".format(len(sections), len(enrolled), len(limits)))
+        links = I._get_planner_links
+        if not(len(sections) == len(enrolled) == len(limits) == len(links)):
+            log("get_section_data data has uneven lengths. sections: {}, enrolled: {}, limits: {}, links: {}".format(len(sections), len(enrolled), len(limits), len(links)))
             return
         courses = list()
         for i in range(len(sections)):
-            courses.append(Course(sections[i], enrolled[i], limits[i]))
+            courses.append(Course(sections[i], enrolled[i], limits[i], links[i]))
         if len(courses) == 0:
             log("get_section_data no courses found.")
         return courses
+    
+    @staticmethod
+    def add_to_planner():
+        I.click(I.planner_link)
+
+    @staticmethod
+    def enroll_in_course(subject, course_number, section):
+        try:
+            section = section.replace("*","")
+            xp = './/tr[contains(.,{}) and contains(.,{}) and contains(.,{})]/td/a[contains(@title,"Enroll")]'.format(subject, course_number, section = "")
+            WebDriverWait(I._driver,30).until(EC.presence_of_element_located((By.XPATH.xp)))
+            button = I._driver.find_element_by_xpath(xp)
+            button.click()
+            I.finish_enroll()
+        except Exception as e:
+            log("enroll_in_course error with passed in subject: {}, course: {}, section: {} --- Error: {}".format(subject, course_number, section, e))
+
+    @staticmethod
+    def finish_enroll():
+        try:
+            WebDriverWait(I._driver,30).until(EC.presence_of_element_located((By.ID,"MainContent_btnContinue")))
+            button = I._driver.find_element_by_id("MainContent_btnContinue")
+            button.click()
+        except Exception as e:
+            log("Finish_enroll error --- Error: {}".format(e))
 
     @staticmethod
     def close_driver():

@@ -22,6 +22,8 @@ class Enroll:
                 print(">",I.available_sections)
                 self.notify.send_email(I.available_sections)
                 self.notify.send_text(I.available_sections)
+                I.add_to_planner()
+                I.enroll_in_course(subject, course_number, section)
                 self.try_delay(Enroll.success_delay)
                 I.available_sections = ""
             self.try_delay(Enroll.failure_delay)
