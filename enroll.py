@@ -2,7 +2,7 @@ from I import I
 from datetime import datetime
 from time import sleep
 class Enroll:
-    success_delay = 10 * 60 * 1000
+    success_delay = 45 * 60 * 1000
     failure_delay = 10 * 1000 # Milliseconds
     def __init__(self, notify = None, term = None, subject = None, course_number = None, section = None):
         self.last_run_time = datetime.now()

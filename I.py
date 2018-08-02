@@ -66,8 +66,6 @@ class I:
                     else:
                         I.available_sections+="And more...\n"
                         return
-                else:
-                    log("FAIL: Could not find room in section {}.".format(c.section))
 
     @staticmethod
     def _get_sections(section):
