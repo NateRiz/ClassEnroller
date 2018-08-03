@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
+import org.openqa.selenium.Keys
 from file_manager import log
 from course import Course
 
@@ -128,25 +129,39 @@ class I:
         I.found_planner_link.click()
 
     @staticmethod
-    def enroll_in_course(subject, course_number, section):
+    def enroll_in_course(subject, course_number, section, netid, password):
         try:
             section = section.replace("*","")
             xp = './/tr[contains(.,{}) and contains(.,{}) and contains(.,{})]/td/a[contains(@title,"Enroll")]'.format(subject, course_number, section = "")
             WebDriverWait(I._driver,30).until(EC.presence_of_element_located((By.XPATH.xp)))
             button = I._driver.find_element_by_xpath(xp)
             button.click()
-            I.finish_enroll()
+            I.finish_enroll(netid, password)
         except Exception as e:
             log("enroll_in_course error with passed in subject: {}, course: {}, section: {} --- Error: {}".format(subject, course_number, section, e))
 
     @staticmethod
-    def finish_enroll():
+    def finish_enroll(netid, password):
+        #Auth?
+        planner_url = "https://schedule.msu.edu/Planner.aspx"
+        if I._driver.Url != planner_url:
+            _login(netid, password)
         try:
             WebDriverWait(I._driver,30).until(EC.presence_of_element_located((By.ID,"MainContent_btnContinue")))
             button = I._driver.find_element_by_id("MainContent_btnContinue")
             button.click()
         except Exception as e:
             log("Finish_enroll error --- Error: {}".format(e))
+
+    @staticmethod 
+    def _login(netid, password):
+        try:
+            WebDriverWait(I._driver, 30).until(EC.presence_of_element_located((By.ID,"netid")))
+            netid_input = I._driver.find_element_by_id("netid")
+            netid_input.send_keys(netid)
+            pass_input = I._driver.find_element_by_id("pswd")
+            pass_input.send_keys(password)
+            pass_input.send_keys(Keys.RETURN)
 
     @staticmethod
     def close_driver():

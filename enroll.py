@@ -4,13 +4,15 @@ from time import sleep
 class Enroll:
     success_delay = 10 * 60 * 1000
     failure_delay = 45 * 1000 # Milliseconds
-    def __init__(self, notify = None, term = None, subject = None, course_number = None, section = None):
+    def __init__(self, notify, term, subject, course_number, section, netid, password):
         self.last_run_time = datetime.now()
         self.notify = notify
         self.term = term
         self.subject = subject
         self.course_number = course_number
         self.section = section
+        self.netid = netid
+        self.pw = password
 
     def main_loop(self):
         while True:
@@ -22,8 +24,9 @@ class Enroll:
                 print(">",I.available_sections)
                 self.notify.send_email(I.available_sections)
                 self.notify.send_text(I.available_sections)
-                #I.add_to_planner()
-                #I.enroll_in_course(subject, course_number, section)
+                if self.netid and self.pw:
+                    I.add_to_planner()
+                    I.enroll_in_course(self.subject, self.course_number, self.section, self.netid, self.password)
                 self.try_delay(Enroll.success_delay)
                 I.available_sections = ""
             self.try_delay(Enroll.failure_delay)
