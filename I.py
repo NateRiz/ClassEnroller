@@ -9,8 +9,8 @@ from course import Course
 
 class I:
     _options = Options()
-    _options.add_argument("--headless")
-    _options.add_argument("--disable-gpu")
+    #_options.add_argument("--headless")
+    #_options.add_argument("--disable-gpu")
     _driver = webdriver.Chrome(chrome_options = _options)
     
     found_planner_link = None
@@ -61,7 +61,7 @@ class I:
                     I.found_planner_link = c.link
                     log("SUCCESS: Found room in section {}.".format(c.section))
                     message_limit = 1400
-                    if I.available_sections <= message_limit:
+                    if len(I.available_sections) <= message_limit:
                         I.available_sections+="{} {} (Section: {}) Opening: {}/{} Enrolled\n".format(Course.subject, Course.course_number, c.section, c.enrolled, c.limit)
                     else:
                         I.available_sections+="And more...\n"
@@ -100,8 +100,8 @@ class I:
     @staticmethod
     def _get_planner_links():
         try:
-            WebDriverWait(I._driver, 30).until(EC.presence_of_element_located((By.XPATH,'.//a[contains(@title, "CLICK HERE to add")]')))
-            links = I._driver.find_elements_by_xpath('.//a[contains(@title, "CLICK HERE to add")]')
+            WebDriverWait(I._driver, 30).until(EC.presence_of_element_located((By.XPATH,'.//a[contains(@title, "to add") and contains(@title, "to your planner")]')))
+            links = I._driver.find_elements_by_xpath('.//a[contains(@title, "to add") and contains(@title, "to your planner")]')
             return links 
         except Exception as e:
             log("get_planner_link error --- Error: {}".format(e))
@@ -112,7 +112,7 @@ class I:
         sections = I._get_sections(section)
         enrolled = I._get_enrolled()
         limits = I._get_limits()
-        links = I._get_planner_links
+        links = I._get_planner_links()
         if not(len(sections) == len(enrolled) == len(limits) == len(links)):
             log("get_section_data data has uneven lengths. sections: {}, enrolled: {}, limits: {}, links: {}".format(len(sections), len(enrolled), len(limits), len(links)))
             return
@@ -125,7 +125,7 @@ class I:
     
     @staticmethod
     def add_to_planner():
-        I.click(I.planner_link)
+        I.found_planner_link.click()
 
     @staticmethod
     def enroll_in_course(subject, course_number, section):
