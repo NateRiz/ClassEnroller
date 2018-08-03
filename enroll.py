@@ -2,8 +2,8 @@ from I import I
 from datetime import datetime
 from time import sleep
 class Enroll:
-    success_delay = 45 * 60 * 1000
-    failure_delay = 10 * 1000 # Milliseconds
+    success_delay = 10 * 60 * 1000
+    failure_delay = 45 * 1000 # Milliseconds
     def __init__(self, notify = None, term = None, subject = None, course_number = None, section = None):
         self.last_run_time = datetime.now()
         self.notify = notify
@@ -22,8 +22,8 @@ class Enroll:
                 print(">",I.available_sections)
                 self.notify.send_email(I.available_sections)
                 self.notify.send_text(I.available_sections)
-                I.add_to_planner()
-                I.enroll_in_course(subject, course_number, section)
+                #I.add_to_planner()
+                #I.enroll_in_course(subject, course_number, section)
                 self.try_delay(Enroll.success_delay)
                 I.available_sections = ""
             self.try_delay(Enroll.failure_delay)

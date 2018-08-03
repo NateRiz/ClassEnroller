@@ -9,8 +9,8 @@ from course import Course
 
 class I:
     _options = Options()
-    #_options.add_argument("--headless")
-    #_options.add_argument("--disable-gpu")
+    _options.add_argument("--headless")
+    _options.add_argument("--disable-gpu")
     _driver = webdriver.Chrome(chrome_options = _options)
     
     found_planner_link = None
