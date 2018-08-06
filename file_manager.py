@@ -24,7 +24,7 @@ def get_settings():
                 settings["phone"] = line[1]
             elif line[0] == "NetID":
                 settings["netid"] = line[1]
-            elif line[0] = "Password":
+            elif line[0] == "Password":
                 settings["netid_password"] = line[1]
             else:
                 settings["course"] = line

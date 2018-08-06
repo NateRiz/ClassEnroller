@@ -9,9 +9,9 @@ def main():
         if len(settings["course"]) == 3:
             enroller = Enroll(notify, settings["course"][0], settings["course"][1], settings["course"][2], settings["netid"], settings["netid_password"])
         elif len(settings["course"]) == 4:
-            enroller = Enroll(notify, settings["course"][0], settings["course"][1], settings["course"][2], settings["course"][3], settings["netid"], settings["netid_password"])
+            enroller = Enroll(notify, settings["course"][0], settings["course"][1], settings["course"][2], settings["netid"], settings["netid_password"], settings["course"][3])
         else:
-            print("Unsupported aamount of arguments")
+            print("Unsupported amount of arguments")
             return
         enroller.main_loop()
     else:

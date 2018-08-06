@@ -4,14 +4,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
-import org.openqa.selenium.Keys
+from selenium.webdriver.common.keys import Keys
 from file_manager import log
 from course import Course
 
 class I:
     _options = Options()
-    _options.add_argument("--headless")
-    _options.add_argument("--disable-gpu")
+   # _options.add_argument("--headless")
+   # _options.add_argument("--disable-gpu")
     _driver = webdriver.Chrome(chrome_options = _options)
     
     found_planner_link = None
@@ -123,29 +123,29 @@ class I:
         if len(courses) == 0:
             log("get_section_data no courses found.")
         return courses
-    
-    @staticmethod
-    def add_to_planner():
-        I.found_planner_link.click()
 
     @staticmethod
-    def enroll_in_course(subject, course_number, section, netid, password):
+    def add_to_planner(netid, password):
+        I.found_planner_link.click()
+        redirect_auth_url = "https://login.msu.edu/?App=RO_SCHEDULE_NET"
+        if I._driver.current_url == redirect_auth_url:
+            I._login(netid, password)
+
+    @staticmethod
+    def enroll_in_course(subject, course_number, section):
         try:
-            section = section.replace("*","")
-            xp = './/tr[contains(.,{}) and contains(.,{}) and contains(.,{})]/td/a[contains(@title,"Enroll")]'.format(subject, course_number, section = "")
-            WebDriverWait(I._driver,30).until(EC.presence_of_element_located((By.XPATH.xp)))
+            if section == None:
+                section = ""
+            xp = ".//tr[contains(.,'{}') and contains(.,'{}') and contains(.,'{}')]/td/a[contains(@title,'Enroll')]".format(subject, course_number, section)
+            WebDriverWait(I._driver,30).until(EC.presence_of_element_located((By.XPATH,xp)))
             button = I._driver.find_element_by_xpath(xp)
             button.click()
-            I.finish_enroll(netid, password)
+            I.finish_enroll()
         except Exception as e:
             log("enroll_in_course error with passed in subject: {}, course: {}, section: {} --- Error: {}".format(subject, course_number, section, e))
 
     @staticmethod
-    def finish_enroll(netid, password):
-        #Auth?
-        planner_url = "https://schedule.msu.edu/Planner.aspx"
-        if I._driver.Url != planner_url:
-            _login(netid, password)
+    def finish_enroll():
         try:
             WebDriverWait(I._driver,30).until(EC.presence_of_element_located((By.ID,"MainContent_btnContinue")))
             button = I._driver.find_element_by_id("MainContent_btnContinue")
@@ -162,6 +162,8 @@ class I:
             pass_input = I._driver.find_element_by_id("pswd")
             pass_input.send_keys(password)
             pass_input.send_keys(Keys.RETURN)
+        except Exception as e:
+            log("_login error with passed in netid: {} , password first letter: {} --- Error: {}".format(netid, password[0], e))
 
     @staticmethod
     def close_driver():
