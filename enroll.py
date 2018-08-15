@@ -27,6 +27,8 @@ class Enroll:
                 if self.netid and self.pw:
                     I.add_to_planner(self.netid, self.pw)
                     I.enroll_in_course(self.subject, self.course_number, self.section)
+                    I._driver.save_screenshot("screenshot.png")
+                    return
                 self.try_delay(Enroll.success_delay)
                 I.available_sections = ""
             self.try_delay(Enroll.failure_delay)

@@ -10,8 +10,8 @@ from course import Course
 
 class I:
     _options = Options()
-   # _options.add_argument("--headless")
-   # _options.add_argument("--disable-gpu")
+    _options.add_argument("--headless")
+    _options.add_argument("--disable-gpu")
     _driver = webdriver.Chrome(chrome_options = _options)
     
     found_planner_link = None
@@ -73,7 +73,7 @@ class I:
         try:
             WebDriverWait(I._driver, 30).until(EC.presence_of_element_located((By.XPATH,'.//td[@class="section-number"]/*[1]')))
             sections = I._driver.find_elements_by_xpath('.//td[@class="section-number"]/*[1]')
-            return [str(s.text) for s in sections]
+            return [int(s.text) for s in sections]
         except Exception as e:
             log("get_sections error with passed in section: {} --- Error: {}".format(section, e))
             return list()
@@ -136,7 +136,7 @@ class I:
         try:
             if section == None:
                 section = ""
-            xp = ".//tr[contains(.,'{}') and contains(.,'{}') and contains(.,'{}')]/td/a[contains(@title,'Enroll')]".format(subject, course_number, section)
+            xp = ".//tr[contains(.,'{}') and contains(.,'{}') and contains(number(./td/a/text()),'{}')]/td/a[contains(@title,'Enroll')]".format(subject, course_number, section)
             WebDriverWait(I._driver,30).until(EC.presence_of_element_located((By.XPATH,xp)))
             button = I._driver.find_element_by_xpath(xp)
             button.click()
